@@ -1,0 +1,18 @@
+server:
+  port: ${PORT:8082}
+---
+spring:
+  application:
+    name: mos-service-ads
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true  # 해당 옵션을 false로 하면 유레카 정보를 사용할뿐 자신의 정보를 다른 서버에게 제공하지 않는다.
+
+---
+logging:
+  level:
+    root: info
+    ads: debug
+    web: debug

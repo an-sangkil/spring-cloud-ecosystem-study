@@ -1,0 +1,85 @@
+server:
+  port: ${PORT:8080}
+---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true  # 해당 옵션을 false로 하면 유레카 정보를 사용할뿐 자신의 정보를 다른 서버에게 제공하지 않는다.
+
+---
+management:
+  endpoint:
+    gateway:
+      enabled: true
+
+---
+spring:
+  application:
+    name: mos-gateway-server
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            name: global name
+            message: this is global filter
+
+        # 디폴트 글로벌 설정에 대한 Retry 정책
+        #   - 서킷브레이커 정책도 이곳에 글로벌로 설정 할 수 있다.
+        #   - 하위 라우터에 retry 정책을 별도로 정의해도, 디폴트 필터의 값이 우선적용된다.
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE,NOT_FOUND
+            methods: GET,POST
+            backoff:
+              firstBackoff: 1000ms
+              maxBackoff: 5000ms
+              factor: 2
+              basedOnPreviousValue: false
+      routes:
+        - id: ads-service-router
+          uri: lb://MOS-SERVICE-ADS
+          predicates:
+            - Path=/ads/**
+          filters:
+            - name: AdsFilter
+              args:
+                name: TestAds-name
+        - id: circuit-breaker-test-router
+          uri: http://localhost:8084
+          predicates:
+            - Path=/user/**
+          filters:
+            # Resilience4j의 인터페이스르 이용함으로 실제 클레스는 없음.  # forward 되는 라우터만 API Gateway 에 생성해준다.
+            - name: CircuitBreaker
+              args:
+                name: userCircuitBreaker
+                fallbackUri: forward:/fallback/default
+            - name: UserFilter
+              args:
+                name: sangkil
+                message: this is user filter
+# 특정 모듈에만 별도의 리트라이 정책 생성하기  (java bean 으로 생성했음으로 주석 처리함 -> GatewayRouter.java)
+#        - id: retry_test
+#          uri: lb://MOS-SERVICE-PRODUCT
+#          predicates:
+##            - Host=*.retry.com, 127.0.0.1, 192.168.0.6
+#            - Path=/product/**
+#          filters:
+#            - name: Retry
+#              args:
+#                retries: 3
+#                statuses: BAD_GATEWAY, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE,NOT_FOUND
+#                methods: GET,POST
+#                backoff:
+#                  firstBackoff: 10ms
+#                  maxBackoff: 50ms
+#                  factor: 2
+#                  basedOnPreviousValue: false
+logging:
+  level:
+    root: info
+    org.springframework.cloud.gateway: info
+    reactor.netty.http.client: DEBUG

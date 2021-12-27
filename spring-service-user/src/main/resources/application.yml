@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:8084}
+spring:
+  application:
+    name: mos-service-user
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+feign:
+  autoconfiguration:
+    jackson:
+      enabled: true
+#  client:
+#    decode-slash: true
+#    config:
+#      default:
+#        decode: ads.model.APIResponse
+
+logging:
+  level:
+    root: info
+    ads.external: debug # open feign package 로그를 보기 위함.
+    ads: debug

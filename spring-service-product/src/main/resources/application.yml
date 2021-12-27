@@ -1,0 +1,16 @@
+server:
+  port: ${PORT:8083}
+spring:
+  application:
+    name: mos-service-product
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+
+logging:
+  level:
+    root: info
+    com.product: debug

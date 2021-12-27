@@ -1,0 +1,16 @@
+eureka:
+  client:
+    # 유레카 서버에 본인 서비스를 등록할 건지 여부,
+    register-with-eureka: false
+    # 유레카 서버로부터 서비스 목록을 로컬 캐시에 저장할 건지 여부, 둘 다 기본값 true 라서 지정하지 않아도 상관 없다.
+    fetch-registry: false
+  instance:
+    status-page-url-path: /info
+    health-check-url-path: /health
+
+server:
+  port: 8761
+
+spring:
+  application:
+    name: mos-eureka-server

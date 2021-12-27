@@ -1,0 +1,3 @@
+rootProject.name = 'spring-cloud-eureka-test'
+include 'spring-cloud-apigateway-test'
+
