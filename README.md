@@ -7,6 +7,9 @@
  - api gateway
    - router 
    - Circuit Breaker
+   - retry
+ - open feign (mvc에서 동작됨 non-blocking 미지원) 
+
 
 ### url 
 - [eureka server](http:/127.0.0.1:8761)
