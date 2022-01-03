@@ -1,3 +1,34 @@
+# docker build 및 run
+## docker file 만들기
+	``` dockerfile 
+		# docker file 
+		# 1. Start with a base image containing Java runtime
+		FROM java:8
+		# 2. Add Author info
+		LABEL maintainer="sangkil.an@cj.net"
+		# Add a volume to /tmp
+		VOLUME /tmp
+		# Make port 8080 available to the world outside this container
+		EXPOSE 8761
+		# The application's jar file
+		ARG JAR_FILE=build/libs/spring-cloud-eureka-test-0.0.1-SNAPSHOT.jar
+		# Add the application's jar to the container
+		COPY ${JAR_FILE} spring-cloud-eureka.jar
+
+		ENV USE_PROFILE=local
+		# Run the jar file
+		ENTRYPOINT ["java","-Dspring.profiles.active=${USE_PROFILE}","-Djava.security.egd=file:/dev/./urandom","-jar","/spring-cloud-eureka.jar"]
+	```
+#### 옵션에 대한 설명
+- FROM : 베이스이미지
+- LABEL : Dockerfile울 관리하는 사람의 이름 또는 이메일 정보를 적으며, 빌드에는 영향없음.
+- VOLUME : 컨테이너 시스템을 외부로 마운트할때 사용
+- EXPOSE : 도커 컨테이너가 실행되었을때 외보로 나가는 포트 지정, 여러개를 지정할수 있다.
+- ARG : Dockerfile 내부 변수
+- COPY : 파일이나 디렉토리를 이미지로 복사한다.
+- ENTRYPOINT : 컨테이너 시작시 실행할 스크립트
+
+
 ### docker build 하기 
 ```shell 
     docker build -t {image name}:{tag version} {docker file path}	
