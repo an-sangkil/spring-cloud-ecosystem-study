@@ -32,11 +32,11 @@ public class GlobalCustomErrorDecoder implements ErrorDecoder {
 
         switch (response.status()){
             case 400:
-                return new BadRequestException(response.reason());
+                return new BadRequestException(HttpStatus.valueOf(response.status()));
             case 404:
                 return new NotFoundException(HttpStatus.valueOf(response.status()));
             case 500:
-                return new InternalServerException(response.reason());
+                return new InternalServerException(HttpStatus.valueOf(response.status()));
             case 501:
             case 502:
             case 503:
