@@ -1,9 +1,9 @@
 package com.client.controller;
 
-import com.client.external.ProductApiFeignClient;
+import com.client.external.ProductApiFeignClient01;
+import com.client.external.ProductApiFeignClient02;
 import com.client.model.APIResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,18 +25,38 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @AllArgsConstructor
 public class ClientController {
 
-    private final ProductApiFeignClient productApiFeignClient;
+    private final ProductApiFeignClient01 productApiFeignClient01;
+    private final ProductApiFeignClient02 productApiFeignClient02;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/product/getall")
     public @ResponseBody
     APIResponse feignTest01() {
-        return productApiFeignClient.productGetAll();
+        return productApiFeignClient01.productGetAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test02")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/findone")
     public @ResponseBody
-    APIResponse feignTest02(@RequestParam(defaultValue = "") String productId) {
-        return productApiFeignClient.findOne(productId);
+    APIResponse feignTest02(@RequestParam(required = false) String productId) {
+        return productApiFeignClient01.findOne(productId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/404")
+    public @ResponseBody
+    APIResponse feignTest03(@RequestParam(defaultValue = "") String productId) {
+        return productApiFeignClient01.find404();
+    }
+
+
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test02/findone")
+    public @ResponseBody
+    APIResponse feignTest02findOne(@RequestParam(required = false) String productId) {
+        return productApiFeignClient02.findOne(productId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test02/404")
+    public @ResponseBody
+    APIResponse feignTest02404(@RequestParam(defaultValue = "") String productId) {
+        return productApiFeignClient02.find404();
     }
 
 }

@@ -81,9 +81,8 @@ public class ProductRouters {
                         .and(RouterFunctions
                                 .route(GET("/external/product"), request -> {
 
-                                    request.queryParam("productId");
-
                                     try {
+                                        String productId = request.queryParam("productId").orElseThrow(IllegalArgumentException::new);
                                         APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");
                                         return ServerResponse.ok()
                                                 .contentType(MediaType.APPLICATION_JSON)

@@ -12,6 +12,14 @@ feign:
   autoconfiguration:
     jackson:
       enabled: true
+  circuitbreaker:
+    enabled: true
+
+  client:
+    config:
+      default:
+        errorDecoder: com.client.config.GlobalCustomErrorDecoder
+    default-to-properties: false
 #  client:
 #    decode-slash: true
 #    config:
@@ -22,3 +30,4 @@ logging:
   level:
     root: info
     ads.client: debug # open feign package 로그를 보기 위함.
+    com.client.external: debug
