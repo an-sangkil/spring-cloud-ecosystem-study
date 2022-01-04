@@ -3,6 +3,7 @@ package com.client.config;
 import com.client.exception.BadRequestException;
 import com.client.exception.InternalServerException;
 import com.client.exception.NotFoundException;
+import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
 import feign.Retryer;
@@ -34,12 +35,12 @@ public class ProductErrorDecoder implements ErrorDecoder {
 
         switch (response.status()){
             case 400:
-            case 404:
             case 500:
             case 501:
             case 502:
             case 503:
-                return new RetryableException(response.status(), response.reason(), response.request().httpMethod(), null, response.request());
+                FeignException feignException = FeignException.errorStatus(methodKey,response);
+                return new RetryableException(response.status(), response.reason(), response.request().httpMethod(),feignException, null, response.request());
         }
 
         return defaultErrorDecoder.decode(methodKey, response);
@@ -50,10 +51,10 @@ public class ProductErrorDecoder implements ErrorDecoder {
 //        return new ProductErrorDecoder();
 //    }
 
-    @Bean
-    public Retryer retryer(){
-        return new Retryer.Default();
-    }
+//    @Bean
+//    public Retryer retryer(){
+//        return new Retryer.Default();
+//    }
 
 
 }

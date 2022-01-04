@@ -35,7 +35,7 @@ public class ProductRouters {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(ProductHandler productHandler) {
         return
-                RouterFunctions.route(GET("/product/get_all")
+                RouterFunctions.route(GET("/product/lazy/get_all")
                                 .and(RequestPredicates.accept(MediaType.ALL)), request -> {
 
                             try {
@@ -80,7 +80,6 @@ public class ProductRouters {
                                 }))
                         .and(RouterFunctions
                                 .route(GET("/external/product"), request -> {
-
                                     try {
                                         String productId = request.queryParam("productId").orElseThrow(IllegalArgumentException::new);
                                         APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");

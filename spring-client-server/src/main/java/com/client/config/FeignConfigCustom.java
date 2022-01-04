@@ -1,11 +1,15 @@
 package com.client.config;
 
 import feign.Logger;
+import feign.Target;
 import feign.codec.ErrorDecoder;
+import org.springframework.cloud.openfeign.CircuitBreakerNameResolver;
 import org.springframework.cloud.openfeign.FeignFormatterRegistrar;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
+
+import java.lang.reflect.Method;
 
 /**
  * <pre>
@@ -47,5 +51,10 @@ public class FeignConfigCustom {
 //    public ErrorDecoder errorDecoder(){
 //        return new ProductErrorDecoder();
 //    }
+
+    @Bean
+    public CircuitBreakerNameResolver circuitBreakerNameResolver() {
+        return (String feignClientName, Target<?> target, Method method) -> feignClientName + "_" + method.getName();
+    }
 
 }

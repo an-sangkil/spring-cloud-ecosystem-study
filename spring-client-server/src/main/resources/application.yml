@@ -9,17 +9,19 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 feign:
+  circuitbreaker:
+    enabled: true
   autoconfiguration:
     jackson:
       enabled: true
-  circuitbreaker:
-    enabled: true
-
   client:
     config:
       default:
         errorDecoder: com.client.config.GlobalCustomErrorDecoder
+        connectionTimeout: 1
+        readTimeout: 1
     default-to-properties: false
+
 #  client:
 #    decode-slash: true
 #    config:

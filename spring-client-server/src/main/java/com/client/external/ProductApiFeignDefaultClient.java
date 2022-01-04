@@ -1,12 +1,9 @@
 package com.client.external;
 
 import com.client.config.FeignConfigCustom;
-import com.client.config.GlobalCustomErrorDecoder;
 import com.client.config.ProductErrorDecoder;
 import com.client.model.APIResponse;
-import org.springframework.cloud.client.circuitbreaker.NoFallbackAvailableException;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,9 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
  * @since 2021/12/27
  */
-
-@FeignClient(name="MOS-SERVICE-PRODUCT", configuration = {FeignConfigCustom.class,ProductErrorDecoder.class}, fallback = ProductApiFeignClient02.Fallback.class)
-public interface ProductApiFeignClient02 {
+@FeignClient(name="product-feign-client-01",url = "http://localhost:8083"
+//        ,configuration = ProductErrorDecoder.class
+)
+public interface ProductApiFeignDefaultClient {
 
     @GetMapping(value = "/external/product", produces ="application/json")
     APIResponse findOne(@RequestParam(required = false) String productId);
@@ -34,19 +32,5 @@ public interface ProductApiFeignClient02 {
     @GetMapping(value = "/external/product/404")
     APIResponse find404();
 
-    @Component
-    class Fallback implements ProductApiFeignClient02 {
 
-        @Override
-        public APIResponse findOne(String productId) {
-            return new APIResponse("","","fixed response");
-        }
-
-        @Override
-        public APIResponse find404() {
-            return new APIResponse("","","fixed response 404");
-        }
-    }
 }
-
-
