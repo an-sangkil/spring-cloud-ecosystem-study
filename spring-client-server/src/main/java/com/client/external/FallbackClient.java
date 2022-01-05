@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
         name="FallbackClient"
         ,url = "http://localhost:8083"
         ,fallback =Fallback.class
-        //,decode404 = true
+        ,decode404 = true
 )
 public interface FallbackClient {
 
     @RequestMapping("/product/lazy/get_all")
+    String productLazyGetAll();
+
+    @RequestMapping("/none")
     String none();
 
 

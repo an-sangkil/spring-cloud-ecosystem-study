@@ -131,9 +131,7 @@ public class GatewayRouter {
     public RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route().path("/fallback", builder -> builder
                         .GET("/default", RequestPredicates.accept(MediaType.ALL), request -> {
-
-
-                            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(APIResponse.builder().message("this is fallback default message").build()), APIResponse.class);
+                            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(APIResponse.builder().message("this is fallback default message fixed").build()), APIResponse.class);
                         }))
 
                 .build();

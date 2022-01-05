@@ -1,8 +1,8 @@
 package com.client.config;
 
 import feign.Logger;
+import feign.Retryer;
 import feign.Target;
-import feign.codec.ErrorDecoder;
 import org.springframework.cloud.openfeign.CircuitBreakerNameResolver;
 import org.springframework.cloud.openfeign.FeignFormatterRegistrar;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +23,7 @@ import java.lang.reflect.Method;
  * @since 2021/12/27
  */
 @Configuration
-public class FeignConfigCustom {
-
+public class GlobalCustomFeignConfig {
 
     /**
      *  Feign 사용시 LocalDate, LocalDateTime 에 대한 설정
@@ -47,14 +46,17 @@ public class FeignConfigCustom {
         return Logger.Level.FULL;
     }
 
-//    @Bean
-//    public ErrorDecoder errorDecoder(){
-//        return new ProductErrorDecoder();
-//    }
 
     @Bean
     public CircuitBreakerNameResolver circuitBreakerNameResolver() {
         return (String feignClientName, Target<?> target, Method method) -> feignClientName + "_" + method.getName();
     }
+
+    @Bean
+    public Retryer retryer(){
+        return new Retryer.Default();
+    }
+
+
 
 }

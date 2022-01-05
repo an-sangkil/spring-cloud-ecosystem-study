@@ -32,35 +32,44 @@ public class ClientController {
     private final ProductApiFeignDefaultClient productApiFeignClient02;
     private final FallbackClient fallbackClient;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/product/getall")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/eureka/product/getall")
     public @ResponseBody
     APIResponse feignTest01() {
         return productApiFeignClient01.productGetAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/findone")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/eureka/findone")
     public @ResponseBody
     APIResponse feignTest02(@RequestParam(required = false) String productId) {
         return productApiFeignClient01.findOne(productId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test01/404")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/eureka/404")
     public @ResponseBody
     APIResponse feignTest03(@RequestParam(defaultValue = "") String productId) {
         return productApiFeignClient01.find404();
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test02/findone")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/default/findone")
     public @ResponseBody
     APIResponse feignTest02findOne(@RequestParam(required = false) String productId) {
         return productApiFeignClient02.findOne(productId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test02/404")
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/default/404")
     public @ResponseBody
     APIResponse feignTest02404(@RequestParam(defaultValue = "") String productId) {
         return productApiFeignClient02.find404();
+    }
+
+
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/fallback/lazy/getAll")
+    public @ResponseBody
+    String fallbackClientGetAll() {
+        String responseStr = fallbackClient.productLazyGetAll();
+        log.debug("responseStr = {}", responseStr);
+        return responseStr;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/client/feign/fallback/none")

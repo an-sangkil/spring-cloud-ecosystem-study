@@ -30,6 +30,7 @@ public class GlobalCustomErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
 
+        log.warn("global error code {}", response.status());
         switch (response.status()){
             case 400:
                 return new BadRequestException(HttpStatus.valueOf(response.status()));
@@ -42,7 +43,6 @@ public class GlobalCustomErrorDecoder implements ErrorDecoder {
             case 503:
                 return new RetryableException(response.status(),response.reason(), response.request().httpMethod(), null,response.request());
         }
-
         return new Default().decode(methodKey, response);
     }
 

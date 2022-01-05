@@ -17,8 +17,13 @@ import org.springframework.stereotype.Component;
 public class Fallback implements FallbackClient{
 
     @Override
+    public String productLazyGetAll() {
+        return "fixed response getall";
+
+    }
+
+    @Override
     public String none() {
         return "fixed response none";
-
     }
 }

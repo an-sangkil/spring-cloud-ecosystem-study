@@ -1,9 +1,9 @@
 package com.client.external;
 
-import com.client.config.FeignConfigCustom;
-import com.client.config.ProductErrorDecoder;
 import com.client.model.APIResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
  * @since 2021/12/27
  */
-@FeignClient(name="product-feign-client-01",url = "http://localhost:8083"
-//        ,configuration = ProductErrorDecoder.class
+@FeignClient(
+        name="product-feign-client-01"
+        ,url = "http://localhost:8083"
+        , fallback = ProductApiFeignDefaultClient.ProductFallback.class
 )
 public interface ProductApiFeignDefaultClient {
 
@@ -32,5 +34,19 @@ public interface ProductApiFeignDefaultClient {
     @GetMapping(value = "/external/product/404")
     APIResponse find404();
 
+    @Component
+    @Qualifier("ProductFallbackDefault")
+    class ProductFallback implements ProductApiFeignDefaultClient {
+
+        @Override
+        public APIResponse findOne(String productId) {
+            return new APIResponse("","","fixed product findOne");
+        }
+
+        @Override
+        public APIResponse find404() {
+            return new APIResponse("","","fixed product 404");
+        }
+    }
 
 }

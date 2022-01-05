@@ -1,9 +1,11 @@
 package com.client.external;
 
-import com.client.config.FeignConfigCustom;
+import com.client.config.GlobalCustomFeignConfig;
 import com.client.config.ProductErrorDecoder;
 import com.client.model.APIResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
  * @since 2021/12/27
  */
-@FeignClient(name="MOS-SERVICE-PRODUCT", configuration = {FeignConfigCustom.class, ProductErrorDecoder.class})
+@FeignClient(
+        name="MOS-SERVICE-PRODUCT"
+        , configuration = {GlobalCustomFeignConfig.class, ProductErrorDecoder.class}
+        , fallback = ProductApiFeignEurekaClient.ProductFallback.class
+)
 public interface ProductApiFeignEurekaClient {
 
     @GetMapping(value = "/external/product/all")
@@ -32,4 +38,23 @@ public interface ProductApiFeignEurekaClient {
     @GetMapping(value = "/external/product/404")
     APIResponse find404();
 
+    @Component
+    @Qualifier("productFallbackEureka")
+    class ProductFallback implements ProductApiFeignEurekaClient{
+
+        @Override
+        public APIResponse productGetAll() {
+            return new APIResponse("","","fixed product getall");
+        }
+
+        @Override
+        public APIResponse findOne(String productId) {
+            return new APIResponse("","","fixed product findOne");
+        }
+
+        @Override
+        public APIResponse find404() {
+            return new APIResponse("","","fixed product 404");
+        }
+    }
 }

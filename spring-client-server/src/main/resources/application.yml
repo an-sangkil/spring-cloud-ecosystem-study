@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8080}
+  port: ${PORT:80}
 spring:
   application:
     name: mos-server-client
@@ -18,8 +18,8 @@ feign:
     config:
       default:
         errorDecoder: com.client.config.GlobalCustomErrorDecoder
-        connectionTimeout: 1
-        readTimeout: 1
+        connectionTimeout: 3000
+        readTimeout: 3000
     default-to-properties: false
 
 #  client:

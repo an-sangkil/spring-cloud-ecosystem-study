@@ -89,6 +89,7 @@ public class ProductRouters {
                                                 Mono.just(apiResponse), APIResponse.class
                                         );
                                     } catch (Exception e) {
+                                        log.error("product find error",e);
                                         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                                                 Mono.just(new APIResponse("FAIL", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage())), APIResponse.class
                                         );
