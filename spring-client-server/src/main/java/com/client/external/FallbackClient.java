@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(
         name="FallbackClient"
         ,url = "http://localhost:8083"
-        ,fallback =Fallback.class
+        ,fallback =FallbackClient.Fallback.class
         ,decode404 = true
 )
 public interface FallbackClient {
@@ -29,5 +29,33 @@ public interface FallbackClient {
     @RequestMapping("/none")
     String none();
 
+    @RequestMapping("/product/timeout")
+    String timeout();
 
+    @RequestMapping("/product/exception")
+    String exception();
+
+    @Component
+    public class Fallback implements FallbackClient{
+
+        @Override
+        public String productLazyGetAll() {
+            return "fixed response getall";
+        }
+
+        @Override
+        public String none() {
+            return "fixed response none";
+        }
+
+        @Override
+        public String timeout() {
+            return "fixed response timeout";
+        }
+
+        @Override
+        public String exception() {
+            return "fixed response exception";
+        }
+    }
 }

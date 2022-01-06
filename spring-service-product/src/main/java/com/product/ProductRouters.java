@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,18 +36,29 @@ public class ProductRouters {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(ProductHandler productHandler) {
         return
-                RouterFunctions.route(GET("/product/lazy/get_all")
-                                .and(RequestPredicates.accept(MediaType.ALL)), request -> {
-
+                RouterFunctions
+                        .route(GET("/product/timeout"),request -> {
                             try {
                                 // 테스트를 위한 지연시간 4 초 , 게이트웨이 설정 시간 3초
                                 TimeUnit.SECONDS.sleep(4);
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                log.error("time out error occur ", e);
+                                return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Mono.error(e), Throwable.class);
                             }
-
-                            return ServerResponse.ok().body(Mono.just("hello user get all"), String.class);
-                        }).and(
+                            return ServerResponse.status(HttpStatus.OK).body(Mono.just("product, "), String.class);
+                        })
+                        .andRoute(GET("/product/exception"), request -> {
+                                    if (new Random().nextBoolean()) {
+                                        throw new RuntimeException("exception occur");
+                                    }
+                                    return ServerResponse.ok().body(Mono.just("no exception occur"),String.class);
+                                }
+                        )
+                        .andRoute(
+                                GET("/product/lazy/get_all")
+                                        .and(RequestPredicates.accept(MediaType.ALL)), request -> {
+                                    return ServerResponse.ok().body(Mono.just("hello user get all"), String.class);
+                                }).and(
                                 RouterFunctions.route(GET("/product/productId"), request -> {
                                     String userId = (String) request.attribute("productId").orElseGet(() -> "");
                                     System.out.println(userId);
@@ -58,24 +70,14 @@ public class ProductRouters {
                             Mono<String> bodyData = request.bodyToMono(String.class);
                             return ServerResponse.ok().body(bodyData, String.class);
                         })
-                        .and(
-                                RouterFunctions.route(GET("/product/notfound_error"), request -> {
-                                    log.info("/product/notfound_error call");
-                                    return ServerResponse.status(HttpStatus.BAD_GATEWAY).body(Mono.just("dd"), String.class);
-                                })
-                        ).and(RouterFunctions
+                        .and(RouterFunctions
                                 .route(GET("/external/product/all"), request -> {
                                     try {
                                         APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");
-                                        return ServerResponse.ok()
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .body(
-                                                Mono.just(apiResponse), APIResponse.class
-                                        );
+                                        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(apiResponse), APIResponse.class);
                                     } catch (Exception e) {
-                                        return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                                                Mono.just(new APIResponse("FAIL", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage())), APIResponse.class
-                                        );
+                                        log.error("product all error", e);
+                                        return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Mono.just(new APIResponse("FAIL", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage())), APIResponse.class);
                                     }
                                 }))
                         .and(RouterFunctions
@@ -83,13 +85,9 @@ public class ProductRouters {
                                     try {
                                         String productId = request.queryParam("productId").orElseThrow(IllegalArgumentException::new);
                                         APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");
-                                        return ServerResponse.ok()
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .body(
-                                                Mono.just(apiResponse), APIResponse.class
-                                        );
+                                        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(apiResponse), APIResponse.class);
                                     } catch (Exception e) {
-                                        log.error("product find error",e);
+                                        log.error("product find error", e);
                                         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                                                 Mono.just(new APIResponse("FAIL", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage())), APIResponse.class
                                         );

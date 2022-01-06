@@ -80,4 +80,19 @@ public class ClientController {
         return responseStr;
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/fallback/timeout")
+    public @ResponseBody
+    String fallbackClientTimeout() {
+        String responseStr = fallbackClient.timeout();
+        log.debug("responseStr = {}", responseStr);
+        return responseStr;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/client/feign/fallback/exception")
+    public @ResponseBody
+    String fallbackClientException() {
+        String responseStr = fallbackClient.exception();
+        log.debug("responseStr = {}", responseStr);
+        return responseStr;
+    }
 }
