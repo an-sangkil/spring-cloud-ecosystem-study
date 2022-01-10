@@ -43,7 +43,7 @@ public class GlobalCustomFeignConfig {
      */
     @Bean
     Logger.Level loggerLevel() {
-        return Logger.Level.FULL;
+        return Logger.Level.BASIC;
     }
 
 
@@ -56,7 +56,5 @@ public class GlobalCustomFeignConfig {
     public Retryer retryer(){
         return new Retryer.Default();
     }
-
-
 
 }

@@ -3,15 +3,11 @@ package com.client.config;
 import com.client.exception.BadRequestException;
 import com.client.exception.InternalServerException;
 import com.client.exception.NotFoundException;
-import feign.Request;
 import feign.Response;
 import feign.RetryableException;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 
 /**
@@ -45,8 +41,4 @@ public class GlobalCustomErrorDecoder implements ErrorDecoder {
         }
         return new Default().decode(methodKey, response);
     }
-
-
-
-
 }
