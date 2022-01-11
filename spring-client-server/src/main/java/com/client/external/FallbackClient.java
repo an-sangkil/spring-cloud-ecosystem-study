@@ -1,5 +1,7 @@
 package com.client.external;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(
         name="FallbackClient"
         ,url = "http://localhost:8083"
-        ,fallback =FallbackClient.Fallback.class
+        //,fallback =FallbackClient.Fallback.class
+        ,fallbackFactory = FallbackClient.TestFallbackFactory.class
         ,decode404 = true
 )
 public interface FallbackClient {
-
-    @RequestMapping("/product/lazy/get_all")
-    String productLazyGetAll();
-
-    @RequestMapping("/none")
-    String none();
 
     @RequestMapping("/product/timeout")
     String timeout();
@@ -37,17 +34,6 @@ public interface FallbackClient {
 
     @Component
     public class Fallback implements FallbackClient{
-
-        @Override
-        public String productLazyGetAll() {
-            return "fixed response getall";
-        }
-
-        @Override
-        public String none() {
-            return "fixed response none";
-        }
-
         @Override
         public String timeout() {
             return "fixed response timeout";
@@ -56,6 +42,16 @@ public interface FallbackClient {
         @Override
         public String exception() {
             return "fixed response exception";
+        }
+    }
+
+    @Slf4j
+    @Component
+    public class TestFallbackFactory implements FallbackFactory<Fallback>{
+        @Override
+        public Fallback create(Throwable cause) {
+            log.error("test fallback error" , cause);
+            return new Fallback();
         }
     }
 }

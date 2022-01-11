@@ -11,14 +11,10 @@ import org.springframework.http.HttpStatus;
 
 
 /**
- * <pre>
- * Description :
  *
- *
- * </pre>
+ *  application.yml 에 feign.client.default 로 등록해서 global 로 사용한다.
  *
  * @author skan
- * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
  * @since 2021/12/27
  */
 @Slf4j
@@ -26,7 +22,7 @@ public class GlobalCustomErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
 
-        log.warn("global error code {}", response.status());
+        log.warn("global error code {}, reason = {}", response.status(), response.reason());
         switch (response.status()){
             case 400:
                 return new BadRequestException(HttpStatus.valueOf(response.status()));

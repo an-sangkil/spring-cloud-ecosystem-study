@@ -11,15 +11,12 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 
 import java.lang.reflect.Method;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
- * <pre>
- * Description :
- *
- *
- * </pre>
+ * feign 에 대한 기본 설정
  *
  * @author skan
- * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
  * @since 2021/12/27
  */
 @Configuration
@@ -54,7 +51,7 @@ public class GlobalCustomFeignConfig {
 
     @Bean
     public Retryer retryer(){
-        return new Retryer.Default();
+        return new Retryer.Default(100, SECONDS.toMillis(1), 5);
     }
 
 }
