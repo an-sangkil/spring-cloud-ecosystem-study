@@ -46,8 +46,17 @@
 
 
 #### image 생성후 docker run 으로 container 생성 
-docker run -d -p 8761:8761 --name={container_name} {image_name}
-docker run -d -p 8761:8761 --name=spring-discovery spring-cloud-eureka-server:latest
+```shell
+docker run -d -it -p 8761:8761 --name={container_name} {image_name}
+docker run -d -it -p 8761:8761 --name=spring-discovery spring-cloud-eureka-server:latest
+
+# option
+# -it : bash 에 접속할수 있는 옵션 
+# -d : background 실행
+# -p : 오픈할 포트  
+```
+
+
 
 ### 생성된 container 확인 
 docker build 로는 이미지를 생성하는 것이기 때문에 컨테이너에는 나타나지 않는다.
@@ -70,7 +79,7 @@ docker stop {container_id}
 ```
 
 ### docker run , spring parameter 적용 
-docker run -p 80:8080 -d --restart always -e USE_PROFILE={profile} --name={container_name} {image_name}
+docker run -p 80:8080 -d --restart always -e USE_PROFILE={profile} --name={container_name} {image_name:tag}
 docker run -p 8761:8761 -d --restart always -e USE_PROFILE=prod --name=spring-discovery spring-cloud-eureka-server:latest
 
 실행된 콘솔에 `the following profiles are active: prod` 로 바뀌어서 나온걸 확인 할 수 있다.

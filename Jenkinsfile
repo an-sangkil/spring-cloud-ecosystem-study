@@ -49,8 +49,18 @@ pipeline {
         stage("docker image ") {
             steps {
                 dir("${APP_PATH}") {
+                       echo "---image Stage---"
                        //sh """docker build -t bbp-sample:build-${env.BUILD_ID} ./"""
                        sh "docker build -t spring-cloud-eureka-server:latest ./"
+                }
+            }
+        }
+
+        stage('docker run') {
+            steps {
+                echo "---Push Stage---"
+                dir("${APP_PATH}") {
+                    sh ' docker run -d -ti --name eureka-test -p 8761:8761 spring-cloud-eureka-server:latest'
                 }
             }
         }
