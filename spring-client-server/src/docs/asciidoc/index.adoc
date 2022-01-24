@@ -1,0 +1,19 @@
+= RESTful Notes API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+[[api]]
+== Fallback Api
+api 에 관련된 설명을 이곳에 적습니다.
+
+include::{snippets}/fallback/curl-request.adoc[]
+include::{snippets}/fallback/http-request.adoc[]
+include::{snippets}/fallback/http-response.adoc[]
+
+

@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.6.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id "org.asciidoctor.convert" version "1.5.8"
     id 'java'
 }
 
@@ -13,7 +14,9 @@ repositories {
 }
 
 ext {
+    // 변수 설정
     set('springCloudVersion', "2021.0.0")
+    set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -23,6 +26,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
@@ -34,5 +40,31 @@ dependencyManagement {
 }
 
 test {
+    outputs.dir snippetsDir
     useJUnitPlatform()
 }
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+task copyAsciidoctor(type: Copy) {
+    dependsOn asciidoctor
+    from "${asciidoctor.outputDir}/html5"
+    into file("src/main/resources/static/docs")
+    //into "${sourceSets.main.output.resourcesDir}/static/docs"
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into "static/docs"
+    }
+}
+
+build {
+    dependsOn(copyAsciidoctor)
+}
+
+jar.enabled(false)
