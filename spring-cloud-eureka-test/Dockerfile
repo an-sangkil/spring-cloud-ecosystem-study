@@ -12,5 +12,7 @@ ARG JAR_FILE=build/libs/spring-cloud-eureka-test-0.0.1-SNAPSHOT.jar
 # Add the application's jar to the container
 COPY ${JAR_FILE} spring-cloud-eureka.jar
 
+ARG ENVIRONMENT
+ENV USE_PROFILE=${ENVIRONMENT}
 # Run the jar file
 ENTRYPOINT ["java","-Dspring.profiles.active=${USE_PROFILE}","-Djava.security.egd=file:/dev/./urandom","-jar","/spring-cloud-eureka.jar"]

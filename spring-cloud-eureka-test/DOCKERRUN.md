@@ -33,6 +33,11 @@
 ```shell 
     docker build -t {image name}:{tag version} {docker file path}	
     docker build -t spring-cloud-eureka-server:latest ./	
+    
+    ## 아규먼트로 사용할 ACTIVE 정보 입력 
+    docker build --build-arg ENVIRONMENT=dev -t spring-cloud-eureka-server:latest ./	
+    
+    ## 이미지 확인
     docker images
     
     ------
