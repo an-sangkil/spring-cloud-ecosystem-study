@@ -22,31 +22,31 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 2021/12/27
  */
 @FeignClient(
-        name="product-feign-client-01"
-        ,url = "http://localhost:8083"
-        , fallback = ProductApiFeignDefaultClient.ProductFallback.class
+  name = "product-feign-client-01",
+  url = "http://localhost:8083",
+  fallback = ProductApiFeignDefaultClient.ProductFallback.class
 )
 public interface ProductApiFeignDefaultClient {
+  @GetMapping(value = "/external/product", produces = "application/json")
+  APIResponse findOne(
+    @RequestParam(required = false, name = "productId") String productId
+  );
 
-    @GetMapping(value = "/external/product", produces ="application/json")
-    APIResponse findOne(@RequestParam(required = false) String productId);
+  @GetMapping(value = "/external/product/404")
+  APIResponse find404();
 
-    @GetMapping(value = "/external/product/404")
-    APIResponse find404();
+  @Component
+  @Qualifier("ProductFallbackDefault")
+  class ProductFallback implements ProductApiFeignDefaultClient {
 
-    @Component
-    @Qualifier("ProductFallbackDefault")
-    class ProductFallback implements ProductApiFeignDefaultClient {
-
-        @Override
-        public APIResponse findOne(String productId) {
-            return new APIResponse("","","fixed product findOne");
-        }
-
-        @Override
-        public APIResponse find404() {
-            return new APIResponse("","","fixed product 404");
-        }
+    @Override
+    public APIResponse findOne(String productId) {
+      return new APIResponse("", "", "fixed product findOne");
     }
 
+    @Override
+    public APIResponse find404() {
+      return new APIResponse("", "", "fixed product 404");
+    }
+  }
 }

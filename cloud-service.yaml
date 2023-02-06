@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-cloud-service   # Service 이름
+  namespace: default
+  labels:
+    app: hello-ads-cloud
+spec:
+  selector:  #연결 Pods
+    app: hello-ads-cloud   # 연결하려는 파드명과 일치해야 한다.
+  ports:
+    - name: eureca-continer
+      protocol: TCP
+      port: 8761
+      targetPort: 8761
+      nodePort: 30091
+    - name: ads-continer
+      protocol: TCP
+      port: 8082
+      nodePort: 30092
+  type: NodePort

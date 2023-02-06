@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-ads-cloud-dempoyment
+  labels:
+    app: hello-ads-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-ads-cloud
+  template:
+    metadata:
+      labels:
+        app: hello-ads-cloud
+    spec:
+      containers:
+        - name: hello-ads-server
+          image: mycup/spring-server-ads:latest
+          #resources:
+          #  limits:
+          #    memory: "128Mi"
+          #    cpu: "500m"
+          ports:
+            - containerPort: 8082
+          env:
+            - name: EURECA_HOST
+              value: "localhost"
+        - name: hello-eureca-service
+          image: mycup/spring-cloud-eureka

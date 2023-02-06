@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-ads-server
+  namespace: default
+  labels:
+    app: hello-ads-server
+spec:
+  selector:
+    app: hello-ads-server
+  ports:
+    - protocol: TCP
+      port: 8082
+      nodePort: 30090
+  type: NodePort
