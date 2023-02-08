@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment                    # 종류
+metadata:
+  name: hello-user-dempoyment     # deployment - 이름
+  labels:                           # deployment 객체에 라벨을 정의
+    app: hello-user
+spec:                               # deployment 의 스펙에 대한 정의
+  replicas: 1                         # replica 갯수
+  selector:                           # 파드가 어떤 레이블 (label)을 가지고 있는지 정의
+    matchLabels:                      # 묶어질 레이블 정의
+      app: hello-user
+  template:                         # 파드 템플릿에 대한 정의
+    metadata:                         # 파트 템플릿 메타정보
+      labels:                            # 파드의 레이블 (label)을 정의
+        app: hello-user
+    spec:                           # 파드 스펙에 대한 정의
+      containers:                     # 컨테이너 정보
+        - name: hello-user-container
+          image: mycup/spring-service-user:latest
+          ports:                     # 컨테이너 포트 정보
+            - containerPort: 8084
+          env:                       # 컨테이너 환경설정 정보
+            - name: EURECA_HOST
+              value: "localhost"
+
+---              
+apiVersion: v1
+kind: Service                                   # YAML 파일에서 정의하는 객체의 종류
+metadata:
+  name: hello-user-service                    # Service 이름
+  namespace: default                            # 서비스가 속한 네임스페이스 정보
+  labels:                                       # 묶여질 라벨
+    app: hello-user                           # 서비스 객체에 라벨을 정의하여 쿠버네티스 오브젝트의 그룹화와 관리를 할 수 있다.
+spec:                                           # 서비스 스팩 정의 (특징, 구성 및 동작방식에 대한 정보)
+  selector:                                     # 연결 Pods
+    app: hello-user                           # 연결하려는 파드명과 일치해야 한다.
+  type: NodePort                                # 서비스의 타입으로 clusterId, nodeport, loadbalancer, externalName 등이 있다.
+  ports:
+    - name: user                              # 포트명칭 (그냥 알아보기 위한 이름)
+      port: 8084                                  # Service 에 들어 오는 포트
+      targetPort: 8084                            # 실제 pod에 연결된 application으로 연결해줄 port
+      nodePort: 30091                           # nodeport로 외부에 열어줄 포트

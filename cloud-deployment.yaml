@@ -1,30 +1,48 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment                        # YAML 파일에서 정의하는 객체의 종류
 metadata:
-  name: hello-ads-cloud-dempoyment
-  labels:
-    app: hello-ads-cloud
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
+  name: hello-ads-cloud-deployment      # deployment pod - 이름
+  labels:                               # deployment 객체에 라벨을 정의
+    app: hello-ads-cloud                   # 실제 라벨명
+spec:                                   # deployment 의 스펙에 대한 정의
+  replicas: 2                               # replica 수
+  selector:                                 # 파드가 어떤 레이블 (label)을 가지고 있는지 정의
+    matchLabels:                              # 레이블에 대한 묶음 정의
       app: hello-ads-cloud
-  template:
-    metadata:
-      labels:
+  template:                             # 파드 템플릿에 대한 정의
+    metadata:                             # 파드에 대한 메타정보
+      labels:                               # 파드의 레이블 (label)을 정의
         app: hello-ads-cloud
-    spec:
-      containers:
+    spec:                                 # 파드 스펙에 대한 정의
+      containers:                           # 컨테이너 정보
+        - name: hello-client
+          image: mycup/spring-cloud-client
+          ports: # 컨테니터 포트 정보
+            - containerPort: 80
         - name: hello-ads-server
           image: mycup/spring-server-ads:latest
-          #resources:
-          #  limits:
-          #    memory: "128Mi"
-          #    cpu: "500m"
-          ports:
-            - containerPort: 8082
-          env:
+          #resources:                       # 리소스 정보
+          #  limits:                          # 리밋 제한 정보
+          #    memory: "128Mi"                # 메모리 리밋 설정
+          #    cpu: "500m"                    # CPU 제한 설정
+          ports:                            # 컨테니터 포트 정보
+            - containerPort: 8082             # 포트 정보
+          env:                              # 컨테이너로 전달할 환경변수 정보
             - name: EURECA_HOST
               value: "localhost"
         - name: hello-eureca-service
           image: mycup/spring-cloud-eureka
+          ports:
+            - containerPort: 8761
+        - name: hello-gateway
+          image: mycup/spring-cloud-gateway
+          ports:
+            - containerPort: 8080
+        - name: hello-product
+          image: mycup/spring-service-product:latest
+          ports:
+            - containerPort: 8083
+        - name: hello-user
+          image: mycup/spring-service-user:latest
+          ports:
+            - containerPort: 8084

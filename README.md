@@ -19,4 +19,7 @@
 - [user-server](http:/127.0.0.1:8084)
 
 
+### kubernetes
 
+kubectl apply -f cloud-deployment.yaml
+kubectl apply -f cloud-service.yaml

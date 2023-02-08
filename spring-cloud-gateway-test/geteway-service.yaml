@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service                                   # YAML 파일에서 정의하는 객체의 종류
+metadata:
+  name: hello-gateway-service                    # Service 이름
+  namespace: default                            # 서비스가 속한 네임스페이스 정보
+  labels:                                       # 묶여질 라벨
+    app: hello-gateway                           # 서비스 객체에 라벨을 정의하여 쿠버네티스 오브젝트의 그룹화와 관리를 할 수 있다.
+spec:                                           # 서비스 스팩 정의 (특징, 구성 및 동작방식에 대한 정보)
+  selector:                                     # 연결 Pods
+    app: hello-gateway                           # 연결하려는 파드명과 일치해야 한다.
+  type: NodePort                                # 서비스의 타입으로 clusterId, nodeport, loadbalancer, externalName 등이 있다.
+  ports:
+    - name: gateway                             # 포트명칭 (그냥 알아보기 위한 이름)
+      port: 8080                                # Service 에 들어 오는 포트
+      targetPort: 8080                          # 실제 pod에 연결된 application으로 연결해줄 port
+      nodePort: 30091                           # nodeport로 외부에 열어줄 포트

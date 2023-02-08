@@ -24,6 +24,11 @@ import reactor.core.publisher.Mono;
 @Component
 public class AdsRouter {
 
+    /**
+     *  전체 광고 조회  
+     * @param adsHandler
+     * @return
+     */
     @Bean
     public RouterFunction<ServerResponse> routerFunction(AdsHandler adsHandler) {
         return RouterFunctions.route(RequestPredicates.GET("/ads/get_all"), adsHandler::adsAll);
