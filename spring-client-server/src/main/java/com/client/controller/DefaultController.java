@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * <pre>
- * Description :
  *
+ * 디스커버리 패턴이 정용되지 않은 (eureka) feign client 를 호출하는 controller
+ *  - IP 또는 HOST 지정하여 호출
  *
- * </pre>
  *
  * @author skan
  * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @AllArgsConstructor
-public class ClientDefaultController {
+public class DefaultController {
 
     private final ProductApiFeignDefaultClient productApiFeignDefaultClient;
 

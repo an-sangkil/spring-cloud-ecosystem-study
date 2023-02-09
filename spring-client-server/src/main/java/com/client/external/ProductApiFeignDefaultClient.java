@@ -35,18 +35,21 @@ public interface ProductApiFeignDefaultClient {
   @GetMapping(value = "/external/product/404")
   APIResponse find404();
 
+  /**
+   * product fallback 클레스로 target 에대한 api 호출 실패시 동작 한다.
+   */
   @Component
   @Qualifier("ProductFallbackDefault")
   class ProductFallback implements ProductApiFeignDefaultClient {
 
     @Override
     public APIResponse findOne(String productId) {
-      return new APIResponse("", "", "fixed product findOne");
+      return new APIResponse("error", "fallback error \n /client/feign/test/default/findone >>  /external/product", "fallback error message , fixed product findOne");
     }
 
     @Override
     public APIResponse find404() {
-      return new APIResponse("", "", "fixed product 404");
+      return new APIResponse("error", "fallback error \n >> /client/feign/test/default/404  >>  /external/product/404, ", "fixed product 404");
     }
   }
 }

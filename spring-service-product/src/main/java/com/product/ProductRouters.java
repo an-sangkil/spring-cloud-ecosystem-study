@@ -19,11 +19,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <pre>
- * Description :
  *
+ * 상품 컨트롤러
  *
- * </pre>
  *
  * @author skan
  * @version Copyright (C) 2021 by CJENM|MezzoMedia. All right reserved.
@@ -37,7 +35,9 @@ public class ProductRouters {
     public RouterFunction<ServerResponse> routerFunction(ProductHandler productHandler) {
         return
                 RouterFunctions
-                        .route(GET("/product/timeout"),request -> {
+
+                        // 타임아웃 익셉션 테스트
+                        .route(GET("/product/timeout-exception"),request -> {
                             try {
                                 // 테스트를 위한 지연시간 4 초 , 게이트웨이 설정 시간 3초
                                 TimeUnit.SECONDS.sleep(4);
@@ -47,20 +47,24 @@ public class ProductRouters {
                             }
                             return ServerResponse.status(HttpStatus.OK).body(Mono.just("product, "), String.class);
                         })
+
+                        // 요청에 따라 랜덤하게 예외를 발생시키거나, 성공메세지를 리턴한다.
                         .andRoute(GET("/product/exception"), request -> {
                                     if (new Random().nextBoolean()) {
-                                        throw new RuntimeException("exception occur");
+                                        throw new RuntimeException("exception occurred");
                                     }
-                                    return ServerResponse.ok().body(Mono.just("no exception occur"),String.class);
+                                    return ServerResponse.ok().body(Mono.just("success"),String.class);
                                 }
                         )
+
+                        // 데이터 조회 용도의 테스트기능
                         .andRoute(
-                                GET("/product/lazy/get_all")
-                                        .and(RequestPredicates.accept(MediaType.ALL)), request -> {
+                                GET("/product/get-all")
+                                        .and(accept(MediaType.ALL)), request -> {
                                     return ServerResponse.ok().body(Mono.just("hello user get all"), String.class);
                                 }).and(
-                                RouterFunctions.route(GET("/product/productId"), request -> {
-                                    String userId = (String) request.attribute("productId").orElseGet(() -> "");
+                                RouterFunctions.route(GET("/product/detail"), request -> {
+                                    String userId = (String) request.queryParam("productId").orElseGet(() -> "");
                                     System.out.println(userId);
                                     Mono<String> data = Mono.just("you search , product id equal =" + userId);
                                     return ServerResponse.ok().body(data, String.class);
@@ -68,12 +72,15 @@ public class ProductRouters {
                         .andRoute(GET("/product/save"), productHandler::save)
                         .andRoute(GET("/product/delete"), request -> {
                             Mono<String> bodyData = request.bodyToMono(String.class);
-                            return ServerResponse.ok().body(bodyData, String.class);
+                            System.out.println("body data = " + bodyData);
+                            return ServerResponse.ok().body("delete product success", String.class);
                         })
+
+                        // 외부 제공 API
                         .and(RouterFunctions
                                 .route(GET("/external/product/all"), request -> {
                                     try {
-                                        APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");
+                                        APIResponse apiResponse = new APIResponse("SUCCESS", "product data", "message");
                                         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(apiResponse), APIResponse.class);
                                     } catch (Exception e) {
                                         log.error("product all error", e);
@@ -84,6 +91,8 @@ public class ProductRouters {
                                 .route(GET("/external/product"), request -> {
                                     try {
                                         String productId = request.queryParam("productId").orElseThrow(IllegalArgumentException::new);
+                                        System.out.println("query param productId = " + productId);
+
                                         APIResponse apiResponse = new APIResponse("SUCCESS", "data", "message");
                                         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(apiResponse), APIResponse.class);
                                     } catch (Exception e) {
@@ -93,8 +102,6 @@ public class ProductRouters {
                                         );
                                     }
                                 }))
-
-
                 ;
     }
 

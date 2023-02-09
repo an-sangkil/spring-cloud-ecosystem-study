@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @AllArgsConstructor
-public class FallbackController {
+public class FallbackTestController {
 
     private final FallbackClient fallbackClient;
 

@@ -29,11 +29,13 @@ public class AdsHandler {
         return ServerResponse.ok().body(Mono.just("hello ads, get all, http://127.0.0.1:8082/nest/ads/path/test "),String.class);
     }
 
-    public Mono<ServerResponse> todayAds(ServerRequest serverRequest) {
-        return ServerResponse.ok().body(Mono.just("today ads,  path=/today_ads/this_one"),String.class);
+    public Mono<ServerResponse> campaignDetail(ServerRequest serverRequest) {
+        return ServerResponse.ok().body(Mono.just("ads campaign detail,  path=/ads/campaign/detail"),String.class);
     }
-
-    public Mono<ServerResponse> getAdsAll(ServerRequest serverRequest) {
-        return ServerResponse.ok().body(Mono.just("today ads getAdsAll , path=/, router path "),String.class);
+    public Mono<ServerResponse> campaignDelete(ServerRequest serverRequest) {
+        return ServerResponse.ok().body(Mono.just("ads campaign delete,  path=/campaign/delete"),String.class);
+    }
+    public Mono<ServerResponse> getCampaignAll(ServerRequest serverRequest) {
+        return ServerResponse.ok().body(Mono.just("ads campaign seatchAll,  path=/campaign/"),String.class);
     }
 }

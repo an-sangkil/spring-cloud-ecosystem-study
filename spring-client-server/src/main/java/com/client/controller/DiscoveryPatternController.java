@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * <pre>
  * Description :
  *
+ * 디스커버리 패턴이 적용된(eureka) feign client 를 호출하는 controller
+ *
  *
  * </pre>
  *
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @AllArgsConstructor
-public class ClientEurekaController {
+public class DiscoveryPatternController {
 
     private final ProductApiFeignEurekaClient productApiFeignEurekaClient;
 
@@ -34,12 +36,17 @@ public class ClientEurekaController {
         return productApiFeignEurekaClient.productGetAll();
     }
 
+    // 게이트웨이를 타지 않고 직접 호출한다.
+    //
     @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/eureka/findone")
     public @ResponseBody
     APIResponse feign_eureka_findOne(@RequestParam(required = false) String productId) {
         return productApiFeignEurekaClient.findOne(productId);
     }
 
+    /**
+     * 페인에서 404 오류가 발생될때 -> 커스텀 처리
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/client/feign/test/eureka/404")
     public @ResponseBody
     APIResponse feign_eureka_404() {

@@ -20,6 +20,6 @@ import reactor.core.publisher.Mono;
 public class ProductHandler {
 
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
-        return ServerResponse.ok().body(Mono.just("SAVE USER SUCCESS"),String.class);
+        return ServerResponse.ok().body(Mono.just("SAVE PRODUCT SUCCESS"),String.class);
     }
 }

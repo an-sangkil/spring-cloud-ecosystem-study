@@ -13,8 +13,10 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.*;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,45 +40,52 @@ public class UserRouters {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
         return
-                RouterFunctions.route(RequestPredicates.GET("/user/get_all")
-                        .and(RequestPredicates.accept(MediaType.ALL)), request -> {
+                // 전체 데이터 조회
+                route(GET("/user/get_all")
+                                .and(accept(MediaType.ALL)), request -> {
+                            return ServerResponse.ok().body(Mono.just("hello user get all"), String.class);
+                        }).and(
+                                // 강제 exception
+                                route(GET("/user/fallback-exception"), request -> {
 
-                    try {
-                        // 테스트를 위한 지연시간 4 초 , 게이트웨이 설정 시간 3초
-                        TimeUnit.SECONDS.sleep(4);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                                    try {
+                                        // 테스트를 위한 지연시간 4 초 , 게이트웨이 설정 시간 3초
+                                        TimeUnit.SECONDS.sleep(4);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
 
-                    return ServerResponse.ok().body(Mono.just("hello user get all"), String.class);
-                }).and(
-                        RouterFunctions.route(RequestPredicates.GET("/user/userId"), request -> {
-                            String userId = (String) request.attribute("userId").orElseGet(() -> "");
-                            System.out.println(userId);
-                            Mono<String> data = Mono.just("you search , user id equal =" + userId);
-                            return ServerResponse.ok().body(data, String.class);
-                        }))
-                        .andRoute(RequestPredicates.GET("/user/save"), userHandler::save)
-                        .andRoute(RequestPredicates.GET("/user/delete"), request -> {
+                                    return ServerResponse.ok().body("SUCCESS", String.class);
+                                })
+                        )
+                        .and(
+
+                                route(GET("/user/detail"), request -> {
+                                    String userId = (String) request.queryParam("userId").orElseGet(() -> "");
+                                    System.out.println("userId = " + userId);
+                                    Mono<String> data = Mono.just("you search , user id equal = " + userId);
+                                    return ServerResponse.ok().body(data, String.class);
+                                }))
+                        .andRoute(GET("/user/save"), userHandler::save)
+                        .andRoute(GET("/user/delete"), request -> {
                             Mono<String> bodyData = request.bodyToMono(String.class);
-
-                            return ServerResponse.ok().body(bodyData, String.class);
+                            System.out.println("bodyData : " + bodyData);
+                            return ServerResponse.ok().body("delete user data", String.class);
                         })
-                        .and(route(GET("/feign/test01"), request -> {
+                        .and(route(GET("/user/feign/product/get-all"), request -> {
 
-                            APIResponse apiResponse =  productApiFeignClient.productGetAll();
-                            log.debug("apiResponse = {}",apiResponse );
-
+                            APIResponse apiResponse = productApiFeignClient.productGetAll();
+                            log.debug("apiResponse = {}", apiResponse);
 
                             return ServerResponse.ok().body(Mono.just("open feign test 01 - success"), String.class);
-                        }) )
-                        .and(route(GET("/feign/test02"), request -> {
+                        }))
+                        .and(route(GET("/user/feign/product/detail"), request -> {
                             String productId = request.queryParam("productId").orElse("");
-                            APIResponse apiResponse =  productApiFeignClient.findOne(productId);
-                            log.debug("apiResponse = {}",apiResponse );
+                            APIResponse apiResponse = productApiFeignClient.findOne(productId);
+                            log.debug("apiResponse = {}", apiResponse);
 
                             return ServerResponse.ok().body(Mono.just("open feign test 02 - success"), String.class);
-                        }) )
+                        }))
 
 
                 ;

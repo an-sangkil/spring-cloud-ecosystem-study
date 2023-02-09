@@ -32,9 +32,7 @@ public interface ProductApiFeignEurekaClient {
   APIResponse productGetAll();
 
   @GetMapping(value = "/external/product", produces = "application/json")
-  APIResponse findOne(
-    @RequestParam(required = false, name = "productId") String productId
-  );
+  APIResponse findOne(@RequestParam(required = false, name = "productId") String productId);
 
   @GetMapping(value = "/external/product/404")
   APIResponse find404();
@@ -45,17 +43,20 @@ public interface ProductApiFeignEurekaClient {
 
     @Override
     public APIResponse productGetAll() {
-      return new APIResponse("", "", "fixed product getall");
+      return new APIResponse("ERROR", "fallback works", "fixed product getall");
     }
 
+    /**
+     * findOne method 데이터 조회에 실패 했을때 fallback 기능제공
+     */
     @Override
     public APIResponse findOne(String productId) {
-      return new APIResponse("", "", "fixed product findOne");
+      return new APIResponse("ERROR", "fallback 'findOne' function works ", "fallback fixed product findOne");
     }
 
     @Override
     public APIResponse find404() {
-      return new APIResponse("", "", "fixed product 404");
+      return new APIResponse("ERROR", "fallback 404 function works", "fixed product 404");
     }
   }
 }
