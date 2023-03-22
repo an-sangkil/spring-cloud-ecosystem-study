@@ -4,16 +4,16 @@ pipeline {
     agent any
 
     tools {
-        gradle 'gradle.6.8'
+        gradle 'gradle.6.8.3'
     }
-    
+
     environment {
         APP_ID          = "spring-cloud-eureka-test"
         APP_PATH        = "${env.WORKSPACE}/${APP_ID}"
+
+        CONTAINER_NAME  = "discovery-service"
         IMAGE_NAME      = "eureka-server"
     }
-
-
 
     stages {
 
@@ -21,12 +21,12 @@ pipeline {
             steps {
                 echo "---Checkout---"
 
-                git branch: 'main', credentialsId: '98acb507-2f04-424e-a102-61097664f03e', url: 'https://github.com/an-sangkil/spring-cloud-ecosystem-study.git'    
+                git branch: 'main', credentialsId: '98acb507-2f04-424e-a102-61097664f03e', url: 'https://github.com/an-sangkil/spring-cloud-ecosystem-study.git'
             }
-            
-            
+
+
         }
-        
+
         stage('Build Stage') {
             steps{
                 dir ("spring-cloud-eureka-test") {
@@ -50,38 +50,39 @@ pipeline {
             }
         }
 
-        stage("docker image ") {
+         stage("docker image ") {
             steps {
                 dir("${APP_PATH}") {
                        echo "---image Stage---"
                        //sh """docker build -t bbp-sample:build-${env.BUILD_ID} ./"""
                        //sh "docker build -t spring-cloud-eureka-server:${env.BUILD_ID} ./"
-                       //docker.build("${IMAGE_NAME}:latest")
-                       docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
+
+                       script {
+                            docker.build("${IMAGE_NAME}:latest")
+                            docker.build("${IMAGE_NAME}:${env.BUILD_ID}")
+                       }
 
                 }
             }
         }
 
-
-        stage('docker image push') {
-            stages{
+         stage('docker image push') {
+            steps {
                 script {
 
                     echo '------  docker image push ----------'
                     sh 'ls -al'
                     //docker.witRegistry('')
                 }
-
             }
 
         }
 
-        stage('docker run') {
+         stage('docker run') {
             steps {
-                echo "---Push Stage---"
+                echo "--- docker run ---"
                 dir("${APP_PATH}") {
-                    sh ' docker run -d -ti --name eureka-test -p 8761:8761 ${IMAGE_NAME}:latest'
+                    sh ' docker run -d -ti --name ${CONTAINER_NAME} -p 8761:8761 ${IMAGE_NAME}:latest'
                 }
             }
         }
