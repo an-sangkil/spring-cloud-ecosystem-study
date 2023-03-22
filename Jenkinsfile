@@ -69,6 +69,7 @@ pipeline {
                 script {
 
                     echo '------  docker image push ----------'
+                    sh 'ls -al'
                     //docker.witRegistry('')
                 }
 
