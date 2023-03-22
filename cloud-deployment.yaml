@@ -1,19 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment                        # YAML 파일에서 정의하는 객체의 종류
 metadata:
-  name: hello-ads-cloud-deployment      # deployment pod - 이름
+  name: hello-ads-cloud-deployment      # deployment 명칭
   labels:                               # deployment 객체에 라벨을 정의
     app: hello-ads-cloud                   # 실제 라벨명
 spec:                                   # deployment 의 스펙에 대한 정의
   replicas: 2                               # replica 수
-  selector:                                 # 파드가 어떤 레이블 (label)을 가지고 있는지 정의
+  selector:                                 # 셀렉터의 레이블 지정 - 파드가 어떤 레이블 (label)을 가지고 있는지 정의
     matchLabels:                              # 레이블에 대한 묶음 정의
       app: hello-ads-cloud
   template:                             # 파드 템플릿에 대한 정의
+                                          # 템플릿의 레이블 지정
     metadata:                             # 파드에 대한 메타정보
       labels:                               # 파드의 레이블 (label)을 정의
         app: hello-ads-cloud
-    spec:                                 # 파드 스펙에 대한 정의
+    spec:                                 # 템플릿에서 사용할 켄테이너 이미지 및 버전 지정(파드 스펙에 대한 정의)
       containers:                           # 컨테이너 정보
         - name: hello-client
           image: mycup/spring-cloud-client
