@@ -1,5 +1,6 @@
 pipeline {
 
+    // jenkins  에이전트를 지정하지 않으므로 자동으로 사용가능한 모든 에이전트를 사용하도록 허용
     agent any
 
     tools {
@@ -9,7 +10,10 @@ pipeline {
     environment {
         APP_ID          = "spring-cloud-eureka-test"
         APP_PATH        = "${env.WORKSPACE}/${APP_ID}"
+        IMAGE_NAME      = "eureka-server"
     }
+
+
 
     stages {
 
@@ -51,16 +55,31 @@ pipeline {
                 dir("${APP_PATH}") {
                        echo "---image Stage---"
                        //sh """docker build -t bbp-sample:build-${env.BUILD_ID} ./"""
-                       sh "docker build -t spring-cloud-eureka-server:latest ./"
+                       //sh "docker build -t spring-cloud-eureka-server:${env.BUILD_ID} ./"
+                       docker.build("${IMAGE_NAME}:latest")
+                       docker.build("${IMAGE_NAME}:${env.BUILD_ID}")
+
                 }
             }
+        }
+
+
+        stage('docker image push') {
+            stages{
+                script {
+
+                    //docker.witRegistry('')
+                }
+
+            }
+
         }
 
         stage('docker run') {
             steps {
                 echo "---Push Stage---"
                 dir("${APP_PATH}") {
-                    sh ' docker run -d -ti --name eureka-test -p 8761:8761 spring-cloud-eureka-server:latest'
+                    sh ' docker run -d -ti --name eureka-test -p 8761:8761 ${IMAGE_NAME}:latest'
                 }
             }
         }
