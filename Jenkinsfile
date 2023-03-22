@@ -56,8 +56,8 @@ pipeline {
                        echo "---image Stage---"
                        //sh """docker build -t bbp-sample:build-${env.BUILD_ID} ./"""
                        //sh "docker build -t spring-cloud-eureka-server:${env.BUILD_ID} ./"
-                       docker.build("${IMAGE_NAME}:latest")
-                       docker.build("${IMAGE_NAME}:${env.BUILD_ID}")
+                       //docker.build("${IMAGE_NAME}:latest")
+                       docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
 
                 }
             }
@@ -68,6 +68,7 @@ pipeline {
             stages{
                 script {
 
+                    echo '------  docker image push ----------'
                     //docker.witRegistry('')
                 }
 
