@@ -61,6 +61,23 @@ bootJar {
     from ("${asciidoctor.outputDir}/html5") {
         into "static/docs"
     }
+
+    String buildNumber
+    if(project.hasProperty('buildNumber')){
+        buildNumber = project.getProperty('buildNumber')
+        filesMatching("**/*.properties") {
+            expand( buildNumber: project.getProperty('buildNumber') )
+        }
+        archiveFileName = "${archiveBaseName.get()}-${buildNumber}.${archiveExtension.get()}"
+    } else {
+        archiveFileName = "${archiveBaseName.get()}-.${archiveExtension.get()}"
+    }
+
+    doLast {
+        if(project.hasProperty('buildNumber')){
+            println "번호 : " + buildNumber
+        }
+    }
 }
 
 build {
