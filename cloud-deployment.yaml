@@ -4,6 +4,7 @@ metadata:
   name: hello-ads-cloud-deployment      # deployment 명칭
   labels:                               # deployment 객체에 라벨을 정의
     app: hello-ads-cloud                   # 실제 라벨명
+  namespace: default
 spec:                                   # deployment 의 스펙에 대한 정의
   replicas: 2                               # replica 수
   selector:                                 # 셀렉터의 레이블 지정 - 파드가 어떤 레이블 (label)을 가지고 있는지 정의
